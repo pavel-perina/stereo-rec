@@ -17,7 +17,8 @@ public class Main {
 		
         try {
 			StereoPair sp = new StereoPair ();
-			sp.readAnaglyph ("c:\\temp\\continentalusmap.png");
+			sp.readAnaglyph ("C:\\devel-c\\stereopair\\Mira Images 2007 - Anaglyphs\\New Project Folder$fld\\New Project$prj\\EM Image 17-55-46 05-09-07$3D\\_left.png", 
+                                "C:\\devel-c\\stereopair\\Mira Images 2007 - Anaglyphs\\New Project Folder$fld\\New Project$prj\\EM Image 17-55-46 05-09-07$3D\\_right.png");
 			//sp.readAnaglyph("c:\\temp\\EM Image 13-16-21  04-21-05$3D\\left.png", "c:\\temp\\EM Image 13-16-21  04-21-05$3D\\right.png");
 			long startTime = System.nanoTime();
 			/*
