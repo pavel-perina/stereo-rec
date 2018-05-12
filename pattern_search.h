@@ -1,81 +1,14 @@
 #pragma once
+
+#include "pattern_search_result.h"
+
 #include <memory>
 #include <string>
 #include <vector>
 
+#include <opencv2\core\mat.hpp>
 // forward declaration(s):
 class PatternSearchPriv;
-
-/////////////////////////////////////////////////////////////
-
-//! \brief Pattern search result
-class PsResult final
-{
-public:
-	int x;       //!< \brief vector x component
-	int y;		 //!< \brief vector y component
-	double cost; //!< \brief cost
-	double quality; //! < \brief Difference between minimal and maximal cost in last search (quality criteria) 
-
-	//! \brief Constructor
-	PsResult();
-};
-
-//////////////////////////////////////////////////////////
-
-class PsResultMatrix final
-{
-public:
-	//! \brief Constructor
-	PsResultMatrix()
-		: m_rows(0)
-		, m_cols(0)
-	{
-	}
-
-	//! \brief Constructor
-	explicit PsResultMatrix(int rows, int cols)
-		: m_rows(rows)
-		, m_cols(cols)
-	{
-		m_data.resize(rows*cols);
-	}
-
-	//! \brief Number of rows (height)
-	__inline int rows() const
-	{
-		return m_rows;
-	}
-
-	//! \brief Number of columns (width)
-	__inline int cols() const
-	{
-		return m_cols;
-	}
-
-	//! \brief Get offset of row, col
-	__inline size_t offset(int row, int col) const
-	{
-		return (size_t)row * m_cols + col;
-	}
-
-	//! \brief Setter 
-	__inline PsResult &operator() (int row, int col)
-	{
-		return m_data[offset(row, col)];
-	}
-
-	//! \brief Getter
-	__inline const PsResult &operator() (int row, int col) const
-	{
-		return m_data[offset(row, col)];
-	}
-private:
-
-	int m_rows;
-	int m_cols;
-	std::vector<PsResult> m_data;
-};
 
 //////////////////////////////////////////////////////////
 
@@ -87,10 +20,13 @@ public:
 	//! \brief Constructor
 	PatternSearch();
 
-	//! \brief Read anaglyph from red and green image channel
-	bool readAnaglyph(const std::string &fileNameUtf8);
-
-	bool readAnaglyph(const std::string &leftFileNameUtf8, const std::string &rightFileNameUtf8);
+	//! \brief Esimate motion using ARPS algorithm.
+	//! \param[in] img1 First image
+	//! \param[in] img2 Second image
+	//! \param[in] mbSize Macroblock size in pixels (used by similarity check)
+	//! \param[in] mbStep Macroblock step in pixels (defines output resulotion)
+	//! \returns 2D array of motion vectors with additional information (cost, quality)
+	PsResultMatrix motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize = 16, int mbStep = 16, int maxDistance = 64);
 
 private:
 

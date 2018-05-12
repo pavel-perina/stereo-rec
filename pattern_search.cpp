@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 //! \file	stereo_pair.cpp
 //! \brief	Stereo Pair Reconstruction (proof of concept)
 //! \author Pavel Perina <pavel.perina@tescan.com>, TESCAN 3DIM s.r.o. 
@@ -28,9 +28,9 @@
 //! http://ninghang.blogspot.cz/2012/11/list-of-mat-type-in-opencv.html
 
 
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-#include "stereo_pair.h"
+#include "pattern_search.h"
 
 #include <opencv2/core/core.hpp>
 #include <limits>
@@ -38,18 +38,7 @@
 #include <array>
 #include <iostream>
 
-///////////////////////////////////////////////////////////////////////////////////
-
-
-PsResult::PsResult()
-	: x(0)
-	, y(0)
-	, cost(std::numeric_limits<double>::max())
-	, quality(0.0)
-{
-}
-
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 class PatternSearchPriv
 {
@@ -262,7 +251,7 @@ PsResultMatrix PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, const 
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
 PatternSearch::PatternSearch()
 	: p( std::make_unique<PatternSearchPriv>() )
@@ -270,8 +259,8 @@ PatternSearch::PatternSearch()
 }
 
 
-bool PatternSearch::readAnaglyph(const std::string &fileNameUtf8)
+PsResultMatrix PatternSearch::motionEstimateARPS(const cv::Mat & img1, const cv::Mat & img2, int mbSize, int mbStep, int maxDistance)
 {
-	bool result = true;
-	return result;
+	return p->motionEstimateARPS(img1, img2, mbSize, mbStep, maxDistance);
 }
+

@@ -18,7 +18,10 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stereo_pair.h">
+    <ClInclude Include="pattern_search.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pattern_search_result.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,7 +29,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stereo_pair.cpp">
+    <ClCompile Include="pattern_search.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

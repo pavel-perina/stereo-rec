@@ -1,5 +1,5 @@
 //! \file main.cpp  Defines the entry point for the console application.
-#include "stereo_pair.h"
+#include "pattern_search.h"
 
 #include <opencv2/core/core.hpp>
 
