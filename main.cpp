@@ -10,14 +10,20 @@
 
 int main()
 {
-	std::string inImageFile = "c:\\temp\\continentalusmap.png";
 	std::string outCsvFile = "c:\\temp\\pattern-search.csv";
+#if 0
+	std::string inImageFile = "c:\\temp\\wood.tif";
 	cv::Mat inImage = cv::imread(inImageFile, cv::IMREAD_COLOR);
 	cv::Mat bgr[3];
 	cv::split(inImage, bgr);
+#else
+	cv::Mat bgr[3];
+	bgr[0] = cv::imread("c:\\temp\\dog+.png", cv::IMREAD_GRAYSCALE);
+	bgr[2] = cv::imread("c:\\temp\\dog-.png", cv::IMREAD_GRAYSCALE);
+#endif
 	PatternSearch ps;
-	const int mbStep = 2;
-	PsArray2x2<PsResult> results = ps.motionEstimateARPS(bgr[0], bgr[2], 8, mbStep, 40);
+	const int mbStep = 12;
+	PsArray2x2<PsResult> results = ps.motionEstimateARPS(bgr[0], bgr[2], 12, mbStep, 96);
 
 	std::ofstream ofs;
 	ofs.open(outCsvFile, std::ios_base::out | std::ios_base::trunc);

@@ -109,7 +109,7 @@ static void initDiamondSearchPattern(std::array<PsResult, 6> &dsp, int diamondSi
 	dsp[1].x = -s;	dsp[1].y = 0;
 	dsp[2].x = 0;	dsp[2].y = 0;
 	dsp[3].x = s;	dsp[3].y = 0;
-	dsp[4].x = 0;	dsp[4].y = -s;
+	dsp[4].x = 0;	dsp[4].y = s;
 }
 
 
