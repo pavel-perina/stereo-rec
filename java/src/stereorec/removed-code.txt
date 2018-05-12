@@ -1,0 +1,242 @@
+////////////////////////////////////////////////////////////////////////////////
+// From StereoPair.java ... testing of pyramids and global displacements
+// note: filter is not difference of gaussians, but difference of gaussian and 
+// original
+////////////////////////////////////////////////////////////////////////////////
+
+	public void doSomething () {
+		RawImage imgPyramid[][]		= null;
+		RawImage gaussPyramid[][]	= null;
+		RawImage lapPyramid[][]		= null;
+		int i = 0;
+		///////////////////////////////////////////////////////////////////
+			
+		// Creating cascade of images
+		// TODO: clear code, now fixed value for 512,256,128,64,32 = five images			
+		int imagesInCascade = 5;	
+		imgPyramid		= new RawImage [imagesInCascade][2];			
+		gaussPyramid	= new RawImage [imagesInCascade][2];			
+		lapPyramid		= new RawImage [imagesInCascade][2];			
+		imgPyramid[0][0] = this.lImg;
+		imgPyramid[0][1] = this.rImg;
+
+
+		
+		// build gaussian pyramid
+		System.out.print ("Building image scale and gaussian pyramids: ");
+		System.out.flush ();
+		for (i = 0; i < imagesInCascade; i++) {				
+			gaussPyramid[i][0] = imgPyramid [i][0].gaussBlur (0.5);
+			gaussPyramid[i][1] = imgPyramid [i][1].gaussBlur (0.5);
+			if (i < imagesInCascade - 1) {
+				imgPyramid[i+1][0] = gaussPyramid [i][0].getHalvedNearest ();
+				imgPyramid[i+1][1] = gaussPyramid [i][1].getHalvedNearest ();
+			}
+			System.out.print (String.valueOf (i+1) + " ");				
+			System.out.flush ();
+		}
+		System.out.print ("\nLaplacian pyramid: ");
+		System.out.flush ();
+
+		// build laplacian pyramid
+		for (i = 0; i < imagesInCascade; i++) {				
+			lapPyramid[i][0] = imgPyramid[i][0].substractImage(gaussPyramid[i][0]);
+			lapPyramid[i][1] = imgPyramid[i][1].substractImage(gaussPyramid[i][1]);
+			System.out.print (String.valueOf (i+1) + " ");				
+			System.out.flush ();
+		}
+		System.out.println();
+		/*
+		// DEBUG: write images to disk
+		try {
+			for (i = 0; i < imagesInCascade; i++) {
+				imgPyramid[i][0].saveToFile ("c:\\temp\\liImgPyramid" + String.valueOf (i+1) + ".png");
+				imgPyramid[i][1].saveToFile ("c:\\temp\\riImgPyramid" + String.valueOf (i+1) + ".png");
+				gaussPyramid[i][0].saveToFile ("c:\\temp\\lgImgPyramid" + String.valueOf (i+1) + ".png");
+				gaussPyramid[i][1].saveToFile ("c:\\temp\\rgImgPyramid" + String.valueOf (i+1) + ".png");
+				lapPyramid[i][0].addOffset(128, 0, 255).saveToFile ("c:\\temp\\llImgPyramid" + String.valueOf (i+1) + ".png");
+				lapPyramid[i][1].addOffset(128, 0, 255).saveToFile ("c:\\temp\\rlImgPyramid" + String.valueOf (i+1) + ".png");
+			}
+		} catch (Exception e) {
+			e.printStackTrace ();
+		}
+		*/
+		/*
+		// DEBUG: try to compute global motion
+		for (i = 0; i < imagesInCascade; i++) {			
+			int[] disVec = fastGlobDisplacement (imgPyramid[i][0], imgPyramid[i][1]);
+			System.out.println ("Displacement vector for image " + i + ": " + disVec[0] + ", " + disVec[1]);
+		}
+*/
+		
+		// TODO: disparities
+
+		// free(data)
+	}
+
+////////////////////////////////////////////////////////////////////////////////
+// From StereoPair.java ... testing of global displacement computation
+// estimation is very poor
+////////////////////////////////////////////////////////////////////////////////
+
+
+	/**
+	 * Fast global movement detection. Counts sum of rows and columns of both
+	 * images, then computes correlations between them and returns vector
+	 * with minimal difference.
+	 * NOTE: doesn't work very well
+	 * @param img1 first image
+	 * @param img2 second image
+	 * @return x,y of movement vector
+	 */
+	static public int[] fastGlobDisplacement (RawImage img1, RawImage img2) {
+		if ( 
+				(img1.getWidth () != img2.getWidth()) ||
+				(img1.getHeight() != img2.getHeight ())
+		) 
+			return null;
+		
+		final int w = img1.getWidth ();
+		final int h = img1.getHeight ();
+		int rowSums[][] = new int[h][2];
+		int colSums[][] = new int[w][2];
+		int result[]	= new int[2];
+		int x, y, i;
+
+		// probably unnecessary zero fill ... skipped
+		/*
+		for (y = 0; y < img1.getHeight(); y++) {
+		}
+		for (x = 0; x < img1.getWidth (); x++) {		
+		}
+		*/ 
+				
+		for (y = 0; y < h; y++) {
+			for (x = 0; x < w; x++) {
+				rowSums[y][0] += img1.getPixel(x, y);
+				colSums[x][0] += img1.getPixel(x, y);
+				rowSums[y][1] += img2.getPixel(x, y);
+				colSums[x][1] += img2.getPixel(x, y);
+			}
+		}
+		
+		// Find minimal differences
+		result[0] = result[1] = Integer.MAX_VALUE;
+		long minSum;		// NOTE: long is 64bit signed in Java (long long in C++)
+
+		minSum = Long.MAX_VALUE;
+		for (int shift = 0; shift < w; shift++) {
+			x = shift;
+			long sum = 0;
+			for (i = 0; i < w; i++) {
+				int diff = colSums[i][0] - colSums[x][1];
+				//sum += diff * diff;
+				sum += Math.abs (diff);
+				if (++x == w)	
+					x = 0;
+				
+			}
+			//System.out.println("Shift: " + (100000+shift) + ", sqrdiff = " + sum);
+			if (sum < minSum) {
+				result[0] = shift;
+				minSum = sum;
+			}				
+		}
+			
+		minSum = Long.MAX_VALUE;
+		for (int shift = 0; shift < h; shift++) {
+			y = shift;
+			long sum = 0;
+			for (i = 0; i < h; i++) {
+				int diff = rowSums[i][0] - rowSums[y][1];
+				//sum += diff * diff;
+				sum += Math.abs (diff);
+				if (++y == h)
+					y = 0;
+			}
+			if (sum < minSum) {
+				result[1] = shift;
+				minSum = sum;
+			}
+		}
+
+		if (result[0] > (w/2))
+			result[0] -= w;
+		if (result[1] > (h/2))
+			result[1] -= h;
+				
+		return result;		
+	}
+
+/////////////////////////////////////////////////////////////////////////////
+
+	public void readAnaglyph (java.io.File imageFile) {
+		final int maskL = 0x00ff0000;
+		final int maskR = 0x0000ff00;
+		final int shiftL = 16;
+		final int shiftR = 8;
+			
+		BufferedImage image = null;
+		int data[] = null;
+					
+		disposeData ();
+		try {
+			image = javax.imageio.ImageIO.read (imageFile);
+		} catch (Exception e) {
+			e.printStackTrace ();
+			return;
+		}
+
+		imgWidth = image.getWidth ();
+		//imgHeight = image.getHeight();
+		imgHeight = image.getHeight ();
+		data = image.getRaster ().getPixels (0, 0, imgWidth, imgHeight, (int[]) null);
+			
+
+		// Getting left and right grayscale (signed int) image from source
+		int dataL[] = new int[imgWidth * imgHeight];
+		int dataR[] = new int[imgWidth * imgHeight];
+		int i = 0, j = 0;
+		for (int y = 0; y < imgHeight; y++) {
+			for (int x = 0; x < imgWidth; x++, i++) {
+				//dataL[i] = (data[i] & maskL) >>> shiftL;
+				//dataR[i] = (data[i] & maskR) >>> shiftR;
+				dataL[i] = data[j++];
+				dataR[i] = data[j++];
+				j++;
+			}
+		}
+		lImg = new RawImage (imgWidth, imgHeight, dataL);
+		rImg = new RawImage (imgWidth, imgHeight, dataR);
+	}
+
+///////////////////////////////////////////////////////////////////
+
+	public void readAnaglyph (String leftFileName, String rightFileName) {
+		disposeData ();
+		try {
+			// TODO: read file using RawImage - readFromFile
+			BufferedImage lImage = javax.imageio.ImageIO.read (new java.io.File (leftFileName));
+			BufferedImage rImage = javax.imageio.ImageIO.read (new java.io.File (rightFileName));
+			imgWidth	= lImage.getWidth ();
+			imgHeight	= lImage.getHeight ();
+			int dataL[] = lImage.getRaster ().getPixels (0, 0, imgWidth, imgHeight, (int[]) null);
+			int dataR[] = rImage.getRaster ().getPixels (0, 0, imgWidth, imgHeight, (int[]) null);
+			lImg = new RawImage (imgWidth, imgHeight, dataL);
+			rImg = new RawImage (imgWidth, imgHeight, dataR);
+		} catch (Exception e) {
+			e.printStackTrace ();
+			disposeData ();
+			return;
+		}
+	}
+
+/////////////////////////////////////////////////////////////////////////////
+
+			//sp.readAnaglyph ("c:\\temp\\beton04+.png");
+			//sp.readAnaglyph ("c:\\temp\\kostka1.png", "c:\\temp\\kostka2.png");
+			//sp.readAnaglyph("c:\\temp\\caltrain001.png", "c:\\temp\\caltrain002.png");
+			//sp.readAnaglyph ("c:\\temp\\ni-grid03.png");
+			//sp.readAnaglyph ("c:\\temp\\510x508.png");
+			sp.readAnaglyph ("c:\\temp\\continentalusmap.png");
+			//sp.readAnaglyph("c:\\temp\\EM Image 13-16-21  04-21-05$3D\\left.png", "c:\\temp\\EM Image 13-16-21  04-21-05$3D\\right.png");

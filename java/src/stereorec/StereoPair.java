@@ -269,6 +269,8 @@ class StereoPair {
 		sdsp[3].x = 1;	sdsp[3].y = 0;
 		sdsp[4].x = 0;	sdsp[4].y = 1;
 		
+		// mbY, mbX - macroblock x,y (result coordinates)
+		// i~y, j~x - image coordinates (top-left corner of macroblock)
 		int mbX = 0, mbY = 0;
 		for (int i = 0; mbY < mbArrHeight; i += mbSize, mbY++) {
 			mbX = 0;
@@ -288,19 +290,22 @@ class StereoPair {
 						checkMatrix[m][n] = 0;
 				checkMatrix[p][p] = 1;
 				
+				// largest index of LDSP (4-no prediction, 5-include predicted)
 				maxIndex = 4;
 				if (j == 0) {
-					// no prediction
+					// no prediction, just make LDSP larger than SDSP
 					stepSize = 2;
 				} else {
 					// predicted movement vector from left neighbour
+					// set diaomond size to square containing predicted vector
 					IntVec pm = vectors[mbX-1][mbY];	
 					stepSize = Math.max (Math.abs (pm.x), Math.abs (pm.y));
 					if ((pm.x != 0) && (pm.y != 0)) {
 						maxIndex = 5;
 						ldsp[5] = pm;
 					}
-				}				
+				}	
+				// Do large diamond search			
 				ldsp[0].x = 0;			ldsp[0].y = -stepSize;
 				ldsp[1].x = -stepSize;	ldsp[1].y = 0;
 				ldsp[2].x = 0;			ldsp[2].y = 0;
@@ -320,6 +325,7 @@ class StereoPair {
 						checkMatrix [ldsp[k].x + p][ldsp[k].y + p] = 1;
 					}
 				}
+				// Initialize optimal cost and point index in LDSP
 				int point = 0;
 				double minCost = Double.MAX_VALUE;
 				for (int k = 0; k <= maxIndex; k++) {
@@ -328,13 +334,14 @@ class StereoPair {
 						point = k;
 					}
 				}
-				
+				// Move x,y to point with the  best cost and reset LDSP costs
 				x += ldsp[point].x;
 				y += ldsp[point].y;
 				for (int k = 0; k < costs.length; k++)
 					costs[k] = Double.MAX_VALUE;
 				costs[2] = minCost;
 				boolean done = false;
+				// Repeat (descent using SDSP)
 				while (!done) {
 					for (int k = 0; k < 5; k++) {
 						int refBlkX = x + sdsp[k].x;
@@ -378,7 +385,7 @@ class StereoPair {
 				vectors[mbX][mbY].y = y - i;
 				vectors[mbX][mbY].minMAD = costs[2];
 			} // for j (rows)
-			mbX = mbY; // useless
+			 mbX = mbY; // useless
 		} // for i (columns)
 				
 		

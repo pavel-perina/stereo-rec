@@ -1,1 +1,5 @@
 .vs
+Debug
+x64
+/java/dist/
+/java/build/
