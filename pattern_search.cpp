@@ -55,15 +55,9 @@ public:
 	//! \param[in] mbStep Macro block step (equal to mbSize in video encoding)
 	//! \param[in] maxDist Maximum search distance
 	PsArray2x2<PsResult> motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int maxDist);
-private:
 
 };
 
-
-void PatternSearchPriv::disposeData()
-{
-
-}
 
 /**
 * Computes the Mean Absolute Difference (MAD) for the given two square blocks (lower is better)
@@ -78,13 +72,31 @@ void PatternSearchPriv::disposeData()
 */
 static double costFuncMAD(const cv::Mat &img1, const cv::Mat &img2, int x1, int y1, int x2, int y2, int n)
 {
-	int err = 0;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			err += abs(img1.at<uint16_t>(y1 + j, x1 + i) - img2.at<uint16_t>(y2 + j, x2 + i));
-		}
+	if (img1.type() != img2.type()) {
+		assert(false);
+		return 0.0;
 	}
-	return (double)err / (n * n);
+
+	int err = 0;
+	switch (img1.type()) {
+	case CV_16UC1:
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				err += abs(img1.at<uint16_t>(y1 + j, x1 + i) - img2.at<uint16_t>(y2 + j, x2 + i));
+			}
+		}
+		return (double)err / (n * n * 65535);
+	case CV_8UC1:
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				err += abs(img1.at<uint8_t>(y1 + j, x1 + i) - img2.at<uint8_t>(y2 + j, x2 + i));
+			}
+		}
+		return (double)err / (n * n * 255);
+	default:
+		assert(false); // unknown type
+		return 0.0;
+	}	
 }
 
 //! \brief Initialize diamond search pattern in array
@@ -115,15 +127,15 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 	// Macroblock array r
 	const int mbArrRows = rows / mbStep;
 	const int mbArrCols = cols / mbStep;
-	PsArray2x2<PsResult> result(mbArrCols, mbArrRows);
+	PsArray2x2<PsResult> result(mbArrRows, mbArrCols);
 	constexpr double maxCost = std::numeric_limits<double>::max();
 
 
 	// Rows
-	for (int i = 0, mbY = 0;  mbY < mbArrRows;  i += mbStep, mbY++) {
+	for (int i = 0, mbY = 0;  mbY < mbArrRows && i < (rows-mbSize);  i += mbStep, mbY++) {
 		std::cout << "Line: " << i << std::endl;
 		// Columns
-		for (int j = 0, mbX = 0;  mbX < mbArrCols;  j += mbStep, mbX++) {
+		for (int j = 0, mbX = 0;  mbX < mbArrCols && j < (cols-mbSize);  j += mbStep, mbX++) {
 			// X and Y are current search position
 			int x = j;
 			int y = i;
@@ -154,7 +166,7 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 						stepSize = 2;
 					}
 					else {
-						PsResult &predicted = result(mbX - 1, mbY);
+						PsResult &predicted = result (mbY, mbX - 1);
 						stepSize = std::max(abs(predicted.x), abs(predicted.y));
 						if ((predicted.x != 0) && (predicted.y != 0)) {
 							// we have predictiction from left block
@@ -255,6 +267,11 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 
 PatternSearch::PatternSearch()
 	: p( std::make_unique<PatternSearchPriv>() )
+{
+}
+
+
+PatternSearch::~PatternSearch()
 {
 }
 

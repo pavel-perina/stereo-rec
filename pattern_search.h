@@ -19,6 +19,9 @@ public:
 	
 	//! \brief Constructor
 	PatternSearch();
+	//! \brief Destructor (needed because of pImpl)
+	//! \details https://stackoverflow.com/questions/9954518/stdunique-ptr-with-an-incomplete-type-wont-compile
+	~PatternSearch();
 
 	//! \brief Esimate motion using ARPS algorithm.
 	//! \param[in] img1 First image
