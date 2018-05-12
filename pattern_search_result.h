@@ -28,18 +28,20 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 
 //! \brief Pattern search result matrix / 2D array
-class PsResultMatrix final
+template<typename T>
+class PsArray2x2 final
 {
 public:
 	//! \brief Constructor
-	PsResultMatrix()
+	PsArray2x2()
 		: m_rows(0)
 		, m_cols(0)
+		, m_data()
 	{
 	}
 
 	//! \brief Constructor
-	explicit PsResultMatrix(int rows, int cols)
+	explicit PsArray2x2(int rows, int cols)
 		: m_rows(rows)
 		, m_cols(cols)
 	{
@@ -65,19 +67,20 @@ public:
 	}
 
 	//! \brief Setter 
-	__inline PsResult &operator() (int row, int col)
+	__inline T &operator() (int row, int col)
 	{
 		return m_data[offset(row, col)];
 	}
 
 	//! \brief Getter
-	__inline const PsResult &operator() (int row, int col) const
+	__inline const T &operator() (int row, int col) const
 	{
 		return m_data[offset(row, col)];
 	}
+
 private:
 
 	int m_rows;
 	int m_cols;
-	std::vector<PsResult> m_data;
+	std::vector<T> m_data;
 };

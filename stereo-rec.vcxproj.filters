@@ -24,12 +24,18 @@
     <ClInclude Include="pattern_search_result.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="pattern_search_debug.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pattern_search.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pattern_search_debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

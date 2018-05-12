@@ -54,7 +54,7 @@ public:
 	//! \param[in] mbSize Macro block size
 	//! \param[in] mbStep Macro block step (equal to mbSize in video encoding)
 	//! \param[in] maxDist Maximum search distance
-	PsResultMatrix motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int maxDist);
+	PsArray2x2<PsResult> motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int maxDist);
 private:
 
 };
@@ -101,13 +101,13 @@ static void initDiamondSearchPattern(std::array<PsResult, 6> &dsp, int diamondSi
 }
 
 
-PsResultMatrix PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int p)
+PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int p)
 {
 	if (   img1.rows != img2.rows
 		|| img1.cols != img2.cols)
 	{
 		assert(false);
-		return PsResultMatrix();
+		return PsArray2x2<PsResult>();
 	}
 
 	const int rows = img1.rows;
@@ -115,7 +115,7 @@ PsResultMatrix PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, const 
 	// Macroblock array r
 	const int mbArrRows = rows / mbStep;
 	const int mbArrCols = cols / mbStep;
-	PsResultMatrix result(mbArrCols, mbArrRows);
+	PsArray2x2<PsResult> result(mbArrCols, mbArrRows);
 	constexpr double maxCost = std::numeric_limits<double>::max();
 
 
@@ -259,7 +259,7 @@ PatternSearch::PatternSearch()
 }
 
 
-PsResultMatrix PatternSearch::motionEstimateARPS(const cv::Mat & img1, const cv::Mat & img2, int mbSize, int mbStep, int maxDistance)
+PsArray2x2<PsResult> PatternSearch::motionEstimateARPS(const cv::Mat & img1, const cv::Mat & img2, int mbSize, int mbStep, int maxDistance)
 {
 	return p->motionEstimateARPS(img1, img2, mbSize, mbStep, maxDistance);
 }
