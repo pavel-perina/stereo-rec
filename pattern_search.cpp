@@ -102,7 +102,7 @@ static double costFuncMAD(const cv::Mat &img1, const cv::Mat &img2, int x1, int 
 //! \brief Initialize diamond search pattern in array
 //! \param[in] dsp Diamond Search Pattern (size >= 5)
 //! \param[in] diamondSize size of diamond
-static void initDiamondSearchPattern(std::array<PsResult, 6> &dsp, int diamondSize) 
+static void initDiamondSearchPattern(std::array<PsResult, 7> &dsp, int diamondSize) 
 {
 	const int s = diamondSize;
 	dsp[0].x = 0;	dsp[0].y = -s;
@@ -142,7 +142,7 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 
 
 			// Prepare LDPS
-			std::array<double, 6> costs;
+			std::array<double, 7> costs;
 			costs.fill(maxCost);
 			costs[2] = costFuncMAD(img1, img2, j, i, j, i, mbSize);
 
@@ -153,8 +153,8 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 			bool done = false;
 			int  pass = 0;
 			do {
-				// -- Initialize diamond search pattern, dsp[5] is optional prediction --
-				std::array<PsResult, 6> dsp;
+				// -- Initialize diamond search pattern, dsp[5,6] is optional prediction --
+				std::array<PsResult, 7> dsp;
 				// max index of search pattern
 				int psMaxIndex = 4;
 
@@ -170,8 +170,16 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 						stepSize = std::max(abs(predicted.x), abs(predicted.y));
 						if ((predicted.x != 0) && (predicted.y != 0)) {
 							// we have predictiction from left block
-							psMaxIndex = 5;
-							dsp[5] = predicted;
+							psMaxIndex++;
+							dsp[psMaxIndex] = predicted;
+						}
+					}
+					if (i != 0 && j != 0) {
+						PsResult &predicted = result(mbY - 1, mbX);
+						if ((predicted.x != 0) && (predicted.y != 0)) {
+							// we have predictiction from top block
+							psMaxIndex++;
+							dsp[psMaxIndex] = predicted;
 						}
 					}
 					initDiamondSearchPattern(dsp, stepSize);
@@ -180,7 +188,6 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 					// pass != 0
 					// Initialize small diamond pattern search
 					initDiamondSearchPattern(dsp, 1);
-
 				}
 
 				// -- Perform diamond pattern search ---------------------
@@ -209,7 +216,6 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 					double cost = costFuncMAD(img1, img2, j, i, refBlkX, refBlkY, mbSize);
 					costs[k] = cost;
 					checkMatrix.at<double>(refBlkY - i + p, refBlkX - j + p) = cost;
-
 				}
 
 				// -- Find minimal cost ----

@@ -11,18 +11,18 @@
 int main()
 {
 	std::string outCsvFile = "c:\\temp\\pattern-search.csv";
-#if 0
+#if 1
 	std::string inImageFile = "c:\\temp\\wood.tif";
 	cv::Mat inImage = cv::imread(inImageFile, cv::IMREAD_COLOR);
 	cv::Mat bgr[3];
 	cv::split(inImage, bgr);
 #else
 	cv::Mat bgr[3];
-	bgr[0] = cv::imread("c:\\temp\\dog+.png", cv::IMREAD_GRAYSCALE);
-	bgr[2] = cv::imread("c:\\temp\\dog-.png", cv::IMREAD_GRAYSCALE);
+	bgr[0] = cv::imread("c:\\temp\\stagetilt-alicona+10.5.png", cv::IMREAD_GRAYSCALE);
+	bgr[2] = cv::imread("c:\\temp\\stagetilt-alicona-10.5.png", cv::IMREAD_GRAYSCALE);
 #endif
 	PatternSearch ps;
-	const int mbStep = 12;
+	const int mbStep = 3;
 	PsArray2x2<PsResult> results = ps.motionEstimateARPS(bgr[0], bgr[2], 12, mbStep, 96);
 
 	std::ofstream ofs;
