@@ -3,3 +3,5 @@ Debug
 x64
 /java/dist/
 /java/build/
+/doxy-out/
+*.user

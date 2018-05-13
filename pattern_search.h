@@ -1,3 +1,7 @@
+//! \file	pattern_search.h
+//! \author Pavel Perina <pavel.perina@tescan.com>, TESCAN 3DIM s.r.o. 
+//! \date	May 2018
+
 #pragma once
 
 #include "pattern_search_result.h"

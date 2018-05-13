@@ -1,0 +1,6 @@
+.image
+{
+	text-align: left;
+	-webkit-filter: drop-shadow(2px 2px 3px #AAA);
+	filter: drop-shadow(2px 2px 3px #AAA);	
+}

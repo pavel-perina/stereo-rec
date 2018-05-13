@@ -1,4 +1,6 @@
-//! \file main.cpp  Defines the entry point for the console application.
+//! \file	main.cpp  
+//! \brief	Defines the entry point for the console application.
+
 #include "pattern_search.h"
 
 #include <opencv2/core/core.hpp>
@@ -8,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 
+//! \brief Application Entry point
 int main()
 {
 	std::string outCsvFile = "c:\\temp\\pattern-search.csv";

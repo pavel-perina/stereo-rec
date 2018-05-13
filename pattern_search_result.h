@@ -12,7 +12,7 @@ public:
 	int x;       //!< \brief vector x component
 	int y;		 //!< \brief vector y component
 	double cost; //!< \brief cost
-	double quality; //! < \brief Difference between minimal and maximal cost in last search (quality criteria) 
+	double quality; //!< \brief Difference between minimal and maximal cost in last search (quality criteria) 
 
 	//! \brief Constructor
 	PsResult()

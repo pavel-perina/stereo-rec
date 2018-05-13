@@ -31,12 +31,12 @@ E.g. in Visual Studio:
 Algorithm
 -----------
 
-Yao Nie and Kai-Kuang Ma 2002
-Adaptive Rood Pattern Search for Fast Block Matching Estimation. 
-IEEE Transactions on Image Processing, vol 11 No 12, 1442- 1447
+Yao Nie and Kai-Kuang Ma 2002<br/>
+Adaptive Rood Pattern Search for Fast Block Matching Estimation.<br/>
+IEEE Transactions on Image Processing, vol 11 No 12, 1442- 1447<br/>
 [Link](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.1016.9431&rep=rep1&type=pdf)
 
-Part 1 is cost function that decreases with increases macroblock similarity. Typical size of macroblock is 16x16. Larger block decreases number of mismatches, but decreses ability to find small features. 
+Part 1 is cost function that decreases with increases macroblock similarity. Typical size of macroblock is 16x16. Larger block decreases number of mismatches, but decreses ability to find small features.<br/>
 Cost function used is very simple sum of absolute differences between pixels (averaged and normalized).
 
 Part 2 of algorithm to find shift between macroblocks in image1 and image2 for which the cost function is minimal. This can be done by exhaustive search limited by maximum range.
@@ -93,7 +93,7 @@ Advantages:
 Example
 -----
 ![wood.tif](https://i.imgur.com/z5dICXk.png)
-Note: uses prediction from left and top neighbor, 3 pixels step and 12x12 pixels for matching. 
+**Note:** *Uses prediction from left and top neighbor, 3 pixels step and 12x12 pixels for matching.*
 
   
   

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////////////////
-//! \file	stereo_pair.cpp
+//! \file	pattern_search.cpp
 //! \brief	Stereo Pair Reconstruction (proof of concept)
 //! \author Pavel Perina <pavel.perina@tescan.com>, TESCAN 3DIM s.r.o. 
 //! \date	May 2018
