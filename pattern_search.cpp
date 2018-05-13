@@ -40,25 +40,6 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-class PatternSearchPriv
-{
-public:
-//	cv::Mat lImg;
-//	cv::Mat rImg;
-
-	void disposeData();
-
-	//! \brief Estimate motion by Adaptive Rood Pattern Search algorithm
-	//! \param[in] img1 First image
-	//! \param[in] img2 Second image
-	//! \param[in] mbSize Macro block size
-	//! \param[in] mbStep Macro block step (equal to mbSize in video encoding)
-	//! \param[in] maxDist Maximum search distance
-	PsArray2x2<PsResult> motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int maxDist);
-
-};
-
-
 /**
 * Computes the Mean Absolute Difference (MAD) for the given two square blocks (lower is better)
 * @param[in] img1 current Image
@@ -113,7 +94,7 @@ static void initDiamondSearchPattern(std::array<PsResult, 7> &dsp, int diamondSi
 }
 
 
-PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int p)
+PsArray2x2<PsResult> motionEstimateARPS(const cv::Mat &img1, const cv::Mat &img2, int mbSize, int mbStep, int p)
 {
 	if (   img1.rows != img2.rows
 		|| img1.cols != img2.cols)
@@ -267,23 +248,3 @@ PsArray2x2<PsResult> PatternSearchPriv::motionEstimateARPS(const cv::Mat &img1, 
 
 	return result;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-PatternSearch::PatternSearch()
-	: p( std::make_unique<PatternSearchPriv>() )
-{
-}
-
-
-PatternSearch::~PatternSearch()
-{
-}
-
-
-PsArray2x2<PsResult> PatternSearch::motionEstimateARPS(const cv::Mat & img1, const cv::Mat & img2, int mbSize, int mbStep, int maxDistance)
-{
-	return p->motionEstimateARPS(img1, img2, mbSize, mbStep, maxDistance);
-}
-

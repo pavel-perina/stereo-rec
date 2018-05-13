@@ -21,9 +21,8 @@ int main()
 	bgr[0] = cv::imread("c:\\temp\\stagetilt-alicona+10.5.png", cv::IMREAD_GRAYSCALE);
 	bgr[2] = cv::imread("c:\\temp\\stagetilt-alicona-10.5.png", cv::IMREAD_GRAYSCALE);
 #endif
-	PatternSearch ps;
 	const int mbStep = 3;
-	PsArray2x2<PsResult> results = ps.motionEstimateARPS(bgr[0], bgr[2], 12, mbStep, 96);
+	PsArray2x2<PsResult> results = motionEstimateARPS(bgr[0], bgr[2], 12, mbStep, 96);
 
 	std::ofstream ofs;
 	ofs.open(outCsvFile, std::ios_base::out | std::ios_base::trunc);
