@@ -150,7 +150,6 @@
   <ItemGroup>
     <ClInclude Include="pattern_search.h" />
     <ClInclude Include="pattern_search_result.h" />
-    <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
