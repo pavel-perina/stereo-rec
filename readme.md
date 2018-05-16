@@ -93,6 +93,7 @@ Advantages:
 Example
 -----
 ![wood.tif](https://i.imgur.com/z5dICXk.png)
+
 **Note:** *Uses prediction from left and top neighbor, 3 pixels step and 12x12 pixels for matching.*
 
   
