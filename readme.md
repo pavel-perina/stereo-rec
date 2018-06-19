@@ -22,7 +22,6 @@ E.g. in Visual Studio:
 	PATH=$(CVDIR)\x64\vc14\bin;$(PATH)
 
 **Notes:**
-- Standard environment settings in TESCAN Brno. Sorry for not using cmake.
 - When using opencv*.props file, go to corresponding settings in project and check `Use settings from parent ...`
 - MSVC project is mostly left at defaults which is messy build environment.
 - Results are saved into CSV file in `c:\temp\` directory
