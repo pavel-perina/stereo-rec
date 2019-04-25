@@ -85,7 +85,7 @@ Advantages:
 ----------
 
 * It's pretty fast 
-* It works quite well with some images
+* It works quite well with some images (translation: usually does not work at all)
 * Can be used for fast initial search
 * Simple implementation of cost function and diamond pattern search. ARPS makes first pass different.
 
